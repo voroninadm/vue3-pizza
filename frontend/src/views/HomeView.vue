@@ -13,26 +13,8 @@
             <h2 class="title title--small sheet__title">
               Выберите ингредиенты
             </h2>
-
             <div class="sheet__content ingredients">
-              <div class="ingredients__sauce">
-                <p>Основной соус:</p>
-
-                <label
-                  v-for="sauce in sauces"
-                  :key="sauce.id"
-                  class="radio ingredients__input"
-                >
-                  <input
-                    type="radio"
-                    name="sauce"
-                    :value="`sauces.value`"
-                    checked
-                  />
-                  <span>{{ sauce.name }}</span>
-                </label>
-              </div>
-
+              <sauce-selector v-model="pizza.sauce" :sauces="sauces" />
               <div class="ingredients__filling">
                 <p>Начинка:</p>
 
@@ -126,12 +108,13 @@ const sizes = sizesJSON.map(normalizeSize);
 
 import DoughSelector from "../modules/constructor/DoughSelector.vue";
 import SizeSelector from "../modules/constructor/SizeSelector.vue";
+import SauceSelector from "../modules/constructor/SauceSelector.vue";
 
 const pizza = reactive({
   name: "",
   dough: doughs[0].value,
   size: sizes[1].value,
-  // sauce: sauceItems[0].value,
+  sauce: sauces[0].value,
   // ingredients: ingredientItems.reduce((acc, item) => {
   //   acc[item.value] = 0;
   //   return acc;
@@ -224,27 +207,7 @@ const pizza = reactive({
   border-top: 1px solid rgba($green-500, 0.1);
 }
 
-.ingredients__sauce {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
 
-  width: 100%;
-  margin-bottom: 14px;
-
-  p {
-    @include r-s16-h19;
-
-    margin-top: 0;
-    margin-right: 16px;
-    margin-bottom: 10px;
-  }
-}
-
-.ingredients__input {
-  margin-right: 24px;
-  margin-bottom: 10px;
-}
 
 .ingredients__filling {
   width: 100%;

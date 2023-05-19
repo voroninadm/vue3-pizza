@@ -15,7 +15,7 @@
             :value="dough.value"
             class="visually-hidden"
             :checked="dough.value == modelValue"
-            @input="emit('update:modelValue', dough.value)"
+            @input="emit('update:modelValue', dough.value)emit('update:modelValue', dough.value)"
           />
           <b>{{ dough.name }}</b>
           <span>{{ dough.description }}</span>
