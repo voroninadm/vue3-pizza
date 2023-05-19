@@ -6,29 +6,7 @@
 
         <dough-selector v-model="pizza.dough" :doughs="doughs" />
 
-        <div class="content__diameter">
-          <div class="sheet">
-            <h2 class="title title--small sheet__title">Выберите размер</h2>
-
-            <div class="sheet__content diameter">
-              <label
-                v-for="size in sizes"
-                :key="size.id"
-                :class="`diameter__input diameter__input--${
-                  sizesList[size.multiplier]
-                }`"
-              >
-                <input
-                  type="radio"
-                  name="diameter"
-                  :value="`${sizesList[size.multiplier]}`"
-                  class="visually-hidden"
-                />
-                <span>{{ size.name }}</span>
-              </label>
-            </div>
-          </div>
-        </div>
+        <size-selector v-model="pizza.size" :sizes="sizes" />
 
         <div class="content__ingredients">
           <div class="sheet">
@@ -48,7 +26,7 @@
                   <input
                     type="radio"
                     name="sauce"
-                    :value="`${saucesList[sauce.id]}`"
+                    :value="`sauces.value`"
                     checked
                   />
                   <span>{{ sauce.name }}</span>
@@ -64,12 +42,9 @@
                     :key="ingredient.id"
                     class="ingredients__item"
                   >
-                    <span
-                      :class="`filling filling--${
-                        ingredientsList[ingredient.id]
-                      }`"
-                      >{{ ingredient.name }}</span
-                    >
+                    <span :class="`filling filling--${ingredients.value}`">{{
+                      ingredient.name
+                    }}</span>
 
                     <div class="counter counter--orange ingredients__counter">
                       <button
@@ -132,21 +107,30 @@
 <script setup>
 import { reactive } from "vue";
 
-import doughs from "../mocks/dough.json";
-import ingredients from "../mocks/ingredients.json";
-import sauces from "../mocks/sauces.json";
-import sizes from "../mocks/sizes.json";
+import {
+  normalizeDough,
+  normalizeIngredients,
+  normalizeSauces,
+  normalizeSize,
+} from "@/common/helpers/normalize";
+
+import doughsJSON from "../mocks/dough.json";
+import ingredientsJSON from "../mocks/ingredients.json";
+import saucesJSON from "../mocks/sauces.json";
+import sizesJSON from "../mocks/sizes.json";
+
+const doughs = doughsJSON.map(normalizeDough);
+const ingredients = ingredientsJSON.map(normalizeIngredients);
+const sauces = saucesJSON.map(normalizeSauces);
+const sizes = sizesJSON.map(normalizeSize);
 
 import DoughSelector from "../modules/constructor/DoughSelector.vue";
-
-import saucesList from "../common/data/sauces";
-import ingredientsList from "../common/data/ingredients";
-import sizesList from "../common/data/sizes";
+import SizeSelector from "../modules/constructor/SizeSelector.vue";
 
 const pizza = reactive({
   name: "",
-  dough: doughs[0].name,
-  // size: sizeItems[0].value,
+  dough: doughs[0].value,
+  size: sizes[1].value,
   // sauce: sauceItems[0].value,
   // ingredients: ingredientItems.reduce((acc, item) => {
   //   acc[item.value] = 0;
@@ -173,19 +157,6 @@ const pizza = reactive({
   padding-right: 2.12%;
   padding-bottom: 30px;
   padding-left: 2.12%;
-}
-
-.content__dough {
-  width: 527px;
-  margin-top: 15px;
-  margin-right: auto;
-  margin-bottom: 15px;
-}
-
-.content__diameter {
-  width: 373px;
-  margin-top: 15px;
-  margin-bottom: 15px;
 }
 
 .content__ingredients {
@@ -529,73 +500,6 @@ const pizza = reactive({
   }
 }
 
-.diameter__input {
-  margin-right: 8.7%;
-  margin-bottom: 20px;
-  padding-top: 7px;
-  padding-bottom: 6px;
-
-  cursor: pointer;
-
-  span {
-    @include r-s16-h19;
-
-    position: relative;
-
-    padding-left: 46px;
-
-    &::before {
-      @include p_center_v;
-
-      width: 36px;
-      height: 36px;
-
-      content: "";
-      transition: 0.3s;
-
-      border-radius: 50%;
-      background-color: $green-100;
-      background-image: url("@/assets/img/diameter.svg");
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-  }
-
-  &:nth-child(3n) {
-    margin-right: 0;
-  }
-
-  &--small {
-    span::before {
-      background-size: 18px;
-    }
-  }
-
-  &--normal {
-    span::before {
-      background-size: 29px;
-    }
-  }
-
-  &--big {
-    span::before {
-      background-size: 100%;
-    }
-  }
-
-  &:hover {
-    span::before {
-      box-shadow: $shadow-regular;
-    }
-  }
-
-  input {
-    &:checked + span::before {
-      box-shadow: $shadow-large;
-    }
-  }
-}
-
 .filling {
   @include r-s14-h16;
 
@@ -620,7 +524,6 @@ const pizza = reactive({
     background-repeat: no-repeat;
     background-position: center;
     background-size: 80% 80%;
-
   }
 
   &--tomatoes::before {
@@ -683,7 +586,6 @@ const pizza = reactive({
     background-image: url("@/assets/img/filling/salmon.svg");
   }
 }
-
 
 .button {
   $bl: &;

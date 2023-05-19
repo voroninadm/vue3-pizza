@@ -7,15 +7,15 @@
         <label
           v-for="dough in doughs"
           :key="dough.id"
-          :class="`dough__input dough__input--${doughList[dough.id]}`"
+          :class="`dough__input dough__input--${dough.value}`"
         >
           <input
             type="radio"
             name="dough"
-            :value="doughList[dough.id]"
+            :value="dough.value"
             class="visually-hidden"
-            :checked="dough.name == modelValue"
-            @input="emit('update:modelValue', dough.name)"
+            :checked="dough.value == modelValue"
+            @input="emit('update:modelValue', dough.value)"
           />
           <b>{{ dough.name }}</b>
           <span>{{ dough.description }}</span>
@@ -26,8 +26,6 @@
 </template>
 
 <script setup>
-import doughList from "@/common/data/doughSizes";
-
 defineProps({
   doughs: {
     type: Array,
