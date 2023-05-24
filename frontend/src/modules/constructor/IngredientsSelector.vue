@@ -8,20 +8,37 @@
         :key="ingredient.id"
         class="ingredients__item"
       >
-        <span :class="`filling filling--${ingredient.value}`">{{
-          ingredient.name
-        }}</span>
+        <app-drag
+          :data-transfer="ingredient"
+          :draggable="getValue(ingredient.value) < MAX_INGREDIENT_COUNT"
+        >
+          <span :class="`filling filling--${ingredient.value}`">{{
+            ingredient.name
+          }}</span>
+        </app-drag>
 
-        <div class="counter counter--orange ingredients__counter">
+        <div class="counter ingredients__counter">
           <button
             type="button"
             class="counter__button counter__button--minus"
-            disabled
+            :disabled="getValue(ingredient.value) === 0"
+            @click="decrementValue(ingredient.value)"
           >
             <span class="visually-hidden">Меньше</span>
           </button>
-          <input type="text" name="counter" class="counter__input" value="0" />
-          <button type="button" class="counter__button counter__button--plus">
+          <input
+            type="text"
+            name="counter"
+            class="counter__input"
+            :value="getValue(ingredient.value)"
+            @input="inputValue(ingredient.value, $event.target.value)"
+          />
+          <button
+            type="button"
+            class="counter__button counter__button--plus"
+            :disabled="getValue(ingredient.value) === MAX_INGREDIENT_COUNT"
+            @click="incrementValue(ingredient.value)"
+          >
             <span class="visually-hidden">Больше</span>
           </button>
         </div>
@@ -31,12 +48,44 @@
 </template>
 
 <script setup>
-defineProps({
+import { toRef } from "vue";
+import AppDrag from "@/common/components/AppDrag.vue";
+import { MAX_INGREDIENT_COUNT } from "@/common/constants";
+
+const props = defineProps({
   ingredients: {
     type: Array,
     default: () => [],
   },
+  values: {
+    type: Object,
+    default: () => ({}),
+  },
 });
+
+const emit = defineEmits(["update"]);
+
+const values = toRef(props, "values");
+
+const getValue = (ingredient) => {
+  return values.value[ingredient] ?? 0;
+};
+
+const setValue = (ingredient, count) => {
+  emit("update", ingredient, Number(count));
+};
+
+const decrementValue = (ingredient) => {
+  setValue(ingredient, getValue(ingredient) - 1);
+};
+
+const incrementValue = (ingredient) => {
+  setValue(ingredient, getValue(ingredient) + 1);
+};
+
+const inputValue = (ingredient, count) => {
+  return setValue(ingredient, Math.min(MAX_INGREDIENT_COUNT, Number(count)));
+};
 </script>
 
 <style lang="scss" scoped>

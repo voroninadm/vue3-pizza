@@ -1,33 +1,35 @@
 <template>
   <div class="content__constructor">
-    <div :class="`pizza pizza--foundation--${dough}-${sauce}`">
-      <div class="pizza__wrapper">
-        <!-- <div
-          v-for="(value, key) in pizzaIngredients"
-          :key="key"
-          class="pizza__filling"
-          :class="[
-            `pizza__filling--${key}`,
-            value === TWO_INGREDIENTS && 'pizza__filling--second',
-            value === THREE_INGREDIENTS && 'pizza__filling--third',
-          ]"
-        /> -->
+    <app-drop @drop="emit('drop', $event.value)">
+      <div class="pizza" :class="`pizza--foundation--${dough}-${sauce}`">
+        <div class="pizza__wrapper">
+          <div
+            v-for="(value, key) in pizzaIngredients"
+            :key="key"
+            class="pizza__filling"
+            :class="[
+              `pizza__filling--${key}`,
+              value === TWO_INGREDIENTS && 'pizza__filling--second',
+              value === THREE_INGREDIENTS && 'pizza__filling--third',
+            ]"
+          />
+        </div>
       </div>
-    </div>
+    </app-drop>
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import AppDrop from "@/common/components/AppDrop.vue";
+
+const TWO_INGREDIENTS = 2;
+const THREE_INGREDIENTS = 3;
 
 const props = defineProps({
   dough: {
     type: String,
     default: "light",
-  },
-  size: {
-    type: String,
-    default: "",
   },
   sauce: {
     type: String,
@@ -39,7 +41,7 @@ const props = defineProps({
   },
 });
 
-// const emit = defineEmits(["drop"]);
+const emit = defineEmits(["drop"]);
 
 const pizzaIngredients = computed(() => {
   /*

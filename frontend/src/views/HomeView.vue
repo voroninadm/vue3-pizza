@@ -17,8 +17,9 @@
               <sauce-selector v-model="pizza.sauce" :sauces="sauces" />
 
               <ingredients-selector
-                v-model="pizza.ingredients"
                 :ingredients="ingredients"
+                :values="pizza.ingredients"
+                @update="updateIngredientAmount"
               />
             </div>
           </div>
@@ -28,6 +29,7 @@
           <label class="input">
             <span class="visually-hidden">Название пиццы</span>
             <input
+              v-model="pizza.name"
               type="text"
               name="pizza_name"
               placeholder="Введите название пиццы"
@@ -36,8 +38,9 @@
 
           <pizza-constructor
             :dough="pizza.dough"
-            :size="pizza.size"
             :sauce="pizza.sauce"
+            :ingredients="pizza.ingredients"
+            @drop="addIngredient"
           />
 
           <div class="content__result">
@@ -53,6 +56,13 @@
 <script setup>
 import { reactive } from "vue";
 
+// components
+import DoughSelector from "../modules/constructor/DoughSelector.vue";
+import SizeSelector from "../modules/constructor/SizeSelector.vue";
+import SauceSelector from "../modules/constructor/SauceSelector.vue";
+import IngredientsSelector from "../modules/constructor/IngredientsSelector.vue";
+import PizzaConstructor from "../modules/constructor/PizzaConstructor.vue";
+
 import {
   normalizeDough,
   normalizeIngredients,
@@ -60,32 +70,36 @@ import {
   normalizeSize,
 } from "@/common/helpers/normalize";
 
+//mocks
 import doughsJSON from "../mocks/dough.json";
 import ingredientsJSON from "../mocks/ingredients.json";
 import saucesJSON from "../mocks/sauces.json";
 import sizesJSON from "../mocks/sizes.json";
 
+// mocks with data value
 const doughs = doughsJSON.map(normalizeDough);
 const ingredients = ingredientsJSON.map(normalizeIngredients);
 const sauces = saucesJSON.map(normalizeSauces);
 const sizes = sizesJSON.map(normalizeSize);
 
-import DoughSelector from "../modules/constructor/DoughSelector.vue";
-import SizeSelector from "../modules/constructor/SizeSelector.vue";
-import SauceSelector from "../modules/constructor/SauceSelector.vue";
-import IngredientsSelector from "../modules/constructor/IngredientsSelector.vue";
-import PizzaConstructor from "../modules/constructor/PizzaConstructor.vue";
-
 const pizza = reactive({
   name: "",
   dough: doughs[0].value,
-  size: sizes[2].value,
+  size: sizes[1].value,
   sauce: sauces[0].value,
-  // ingredients: ingredients.reduce((acc, item) => {
-  //   acc[item.value] = 0;
-  //   return acc;
-  // }, {}),
+  ingredients: ingredients.reduce((acc, item) => {
+    acc[item.value] = 0;
+    return acc;
+  }, {}),
 });
+
+const addIngredient = (ingredient) => {
+  pizza.ingredients[ingredient]++;
+};
+
+const updateIngredientAmount = (ingredient, count) => {
+  pizza.ingredients[ingredient] = count;
+};
 </script>
 
 <style lang="scss">
