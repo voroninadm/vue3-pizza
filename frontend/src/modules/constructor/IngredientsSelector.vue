@@ -17,31 +17,14 @@
           }}</span>
         </app-drag>
 
-        <div class="counter ingredients__counter">
-          <button
-            type="button"
-            class="counter__button counter__button--minus"
-            :disabled="getValue(ingredient.value) === 0"
-            @click="decrementValue(ingredient.value)"
-          >
-            <span class="visually-hidden">Меньше</span>
-          </button>
-          <input
-            type="text"
-            name="counter"
-            class="counter__input"
-            :value="getValue(ingredient.value)"
-            @input="inputValue(ingredient.value, $event.target.value)"
-          />
-          <button
-            type="button"
-            class="counter__button counter__button--plus"
-            :disabled="getValue(ingredient.value) === MAX_INGREDIENT_COUNT"
-            @click="incrementValue(ingredient.value)"
-          >
-            <span class="visually-hidden">Больше</span>
-          </button>
-        </div>
+        <app-counter
+          class="ingredients__counter"
+          :value="getValue(ingredient.value)"
+          :min="0"
+          :max="MAX_INGREDIENT_COUNT"
+          @input="inputValue(ingredient.value, $event)"
+          @increment="incrementValue(ingredient.value)"
+        />
       </li>
     </ul>
   </div>
@@ -51,6 +34,7 @@
 import { toRef } from "vue";
 import AppDrag from "@/common/components/AppDrag.vue";
 import { MAX_INGREDIENT_COUNT } from "@/common/constants";
+import AppCounter from "@/common/components/AppCounter.vue";
 
 const props = defineProps({
   ingredients: {
