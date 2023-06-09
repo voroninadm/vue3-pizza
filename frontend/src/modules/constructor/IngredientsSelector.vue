@@ -23,7 +23,6 @@
           :min="0"
           :max="MAX_INGREDIENT_COUNT"
           @input="inputValue(ingredient.value, $event)"
-          @increment="incrementValue(ingredient.value)"
         />
       </li>
     </ul>
@@ -59,13 +58,13 @@ const setValue = (ingredient, count) => {
   emit("update", ingredient, Number(count));
 };
 
-const decrementValue = (ingredient) => {
-  setValue(ingredient, getValue(ingredient) - 1);
-};
+// const decrementValue = (ingredient) => {
+//   setValue(ingredient, getValue(ingredient) - 1);
+// };
 
-const incrementValue = (ingredient) => {
-  setValue(ingredient, getValue(ingredient) + 1);
-};
+// const incrementValue = (ingredient) => {
+//   setValue(ingredient, getValue(ingredient) + 1);
+// };
 
 const inputValue = (ingredient, count) => {
   return setValue(ingredient, Math.min(MAX_INGREDIENT_COUNT, Number(count)));
