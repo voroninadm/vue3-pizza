@@ -7,7 +7,7 @@
 <script setup>
 import { shallowRef, watch } from "vue";
 import { useRoute } from "vue-router";
-import AppLayoutDefault from "./DefaultLayout.vue";
+import AppLayoutDefault from "./dynamic/DefaultLayout.vue";
 
 const route = useRoute();
 const layout = shallowRef(null);
@@ -19,7 +19,7 @@ watch(
     try {
       if (meta.layout) {
         // Пробуем найти компонент из свойства meta и динамически импортировать его
-        const component = await import(`./${meta.layout}.vue`);
+        const component = await import(`./dynamic/${meta.layout}.vue`);
         layout.value = component?.default || AppLayoutDefault;
       } else {
         layout.value = AppLayoutDefault;
