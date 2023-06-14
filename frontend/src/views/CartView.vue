@@ -1,5 +1,5 @@
 <template>
-  <form action="test.html" method="post" class="layout-form">
+  <form action="#" method="post" class="layout-form">
     <main class="content cart">
       <div class="container">
         <div class="cart__title">
@@ -14,7 +14,7 @@
           <li class="cart-list__item">
             <div class="product cart-list__product">
               <img
-                src="@/assets/img/product.svg"
+                :src="getImage('product.svg')"
                 class="product__img"
                 width="56"
                 height="56"
@@ -30,26 +30,12 @@
               </div>
             </div>
 
-            <div class="counter cart-list__counter">
-              <button
-                type="button"
-                class="counter__button counter__button--minus"
-              >
-                <span class="visually-hidden">Меньше</span>
-              </button>
-              <input
-                type="text"
-                name="counter"
-                class="counter__input"
-                value="1"
-              />
-              <button
-                type="button"
-                class="counter__button counter__button--plus counter__button--orange"
-              >
-                <span class="visually-hidden">Больше</span>
-              </button>
-            </div>
+            <app-counter
+              class="cart-list__counter"
+              :value="value"
+              orange-accent
+              @input="value = $event"
+            />
 
             <div class="cart-list__price">
               <b>782 ₽</b>
@@ -62,7 +48,7 @@
           <li class="cart-list__item">
             <div class="product cart-list__product">
               <img
-                src="@/assets/img/product.svg"
+                :src="getImage('product.svg')"
                 class="product__img"
                 width="56"
                 height="56"
@@ -81,26 +67,12 @@
               </div>
             </div>
 
-            <div class="counter cart-list__counter">
-              <button
-                type="button"
-                class="counter__button counter__button--minus"
-              >
-                <span class="visually-hidden">Меньше</span>
-              </button>
-              <input
-                type="text"
-                name="counter"
-                class="counter__input"
-                value="2"
-              />
-              <button
-                type="button"
-                class="counter__button counter__button--plus counter__button--orange"
-              >
-                <span class="visually-hidden">Больше</span>
-              </button>
-            </div>
+            <app-counter
+              class="cart-list__counter"
+              :value="value"
+              orange-accent
+              @input="value = $event"
+            />
 
             <div class="cart-list__price">
               <b>782 ₽</b>
@@ -117,7 +89,7 @@
             <li class="additional-list__item sheet">
               <p class="additional-list__description">
                 <img
-                  src="@/assets/img/cola.svg"
+                  :src="getImage('cola.svg')"
                   width="39"
                   height="60"
                   alt="Coca-Cola 0,5 литра"
@@ -126,26 +98,12 @@
               </p>
 
               <div class="additional-list__wrapper">
-                <div class="counter additional-list__counter">
-                  <button
-                    type="button"
-                    class="counter__button counter__button--minus"
-                  >
-                    <span class="visually-hidden">Меньше</span>
-                  </button>
-                  <input
-                    type="text"
-                    name="counter"
-                    class="counter__input"
-                    value="2"
-                  />
-                  <button
-                    type="button"
-                    class="counter__button counter__button--plus counter__button--orange"
-                  >
-                    <span class="visually-hidden">Больше</span>
-                  </button>
-                </div>
+                <app-counter
+                  class="cart-list__counter"
+                  :value="value"
+                  orange-accent
+                  @input="value = $event"
+                />
 
                 <div class="additional-list__price">
                   <b>× 56 ₽</b>
@@ -155,7 +113,7 @@
             <li class="additional-list__item sheet">
               <p class="additional-list__description">
                 <img
-                  src="@/assets/img/sauce.svg"
+                  :src="getImage('sauce.svg')"
                   width="39"
                   height="60"
                   alt="Острый соус"
@@ -164,26 +122,12 @@
               </p>
 
               <div class="additional-list__wrapper">
-                <div class="counter additional-list__counter">
-                  <button
-                    type="button"
-                    class="counter__button counter__button--minus"
-                  >
-                    <span class="visually-hidden">Меньше</span>
-                  </button>
-                  <input
-                    type="text"
-                    name="counter"
-                    class="counter__input"
-                    value="2"
-                  />
-                  <button
-                    type="button"
-                    class="counter__button counter__button--plus counter__button--orange"
-                  >
-                    <span class="visually-hidden">Больше</span>
-                  </button>
-                </div>
+                <app-counter
+                  class="cart-list__counter"
+                  :value="value"
+                  orange-accent
+                  @input="value = $event"
+                />
 
                 <div class="additional-list__price">
                   <b>× 30 ₽</b>
@@ -193,7 +137,7 @@
             <li class="additional-list__item sheet">
               <p class="additional-list__description">
                 <img
-                  src="@/assets/img/potato.svg"
+                  :src="getImage('potato.svg')"
                   width="39"
                   height="60"
                   alt="Картошка из печи"
@@ -202,26 +146,12 @@
               </p>
 
               <div class="additional-list__wrapper">
-                <div class="counter additional-list__counter">
-                  <button
-                    type="button"
-                    class="counter__button counter__button--minus"
-                  >
-                    <span class="visually-hidden">Меньше</span>
-                  </button>
-                  <input
-                    type="text"
-                    name="counter"
-                    class="counter__input"
-                    value="2"
-                  />
-                  <button
-                    type="button"
-                    class="counter__button counter__button--plus counter__button--orange"
-                  >
-                    <span class="visually-hidden">Больше</span>
-                  </button>
-                </div>
+                <app-counter
+                  class="cart-list__counter"
+                  :value="value"
+                  orange-accent
+                  @input="value = $event"
+                />
 
                 <div class="additional-list__price">
                   <b>× 56 ₽</b>
@@ -278,9 +208,11 @@
     </main>
     <section class="footer">
       <div class="footer__more">
-        <a href="#" class="button button--border button--arrow"
-          >Хочу еще одну</a
-        >
+        <router-link
+          :to="{ name: 'home' }"
+          class="button button--border button--arrow"
+          >Хочу еще одну
+        </router-link>
       </div>
       <p class="footer__text">
         Перейти к конструктору<br />чтоб собрать ещё одну пиццу
@@ -296,7 +228,16 @@
   </form>
 </template>
 
-<script></script>
+<script setup>
+import AppCounter from "@/common/components/AppCounter.vue";
+import { ref } from "vue";
+
+const value = ref(0);
+
+const getImage = (image) => {
+  return new URL(`../assets/img/${image}`, import.meta.url).href;
+};
+</script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds.scss";
