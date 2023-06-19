@@ -12,10 +12,10 @@
           <input
             type="radio"
             name="dough"
-            :value="dough.value"
+            :value="dough.id"
             class="visually-hidden"
-            :checked="dough.value == modelValue"
-            @input="emit('update:modelValue', dough.value)"
+            :checked="dough.id == modelValue"
+            @input="emit('update:modelValue', dough.id)"
           />
           <b>{{ dough.name }}</b>
           <span>{{ dough.description }}</span>
@@ -32,8 +32,8 @@ defineProps({
     default: () => [],
   },
   modelValue: {
-    type: String,
-    default: "",
+    type: Number,
+    required: true,
   },
 });
 

@@ -7,9 +7,9 @@ export const usePizzaStore = defineStore("pizza", {
   state: () => ({
     index: null,
     name: "",
-    sauceId: 0,
-    doughId: 0,
-    sizeId: 0,
+    sauceId: 1,
+    doughId: 1,
+    sizeId: 2,
     ingredients: [],
   }),
   getters: {
@@ -19,11 +19,11 @@ export const usePizzaStore = defineStore("pizza", {
     },
     dough: (state) => {
       const data = useDataStore();
-      return data.doughs.find((i) => i.id === state.sauceId) ?? data.doughs[0];
+      return data.doughs.find((i) => i.id === state.doughId) ?? data.doughs[0];
     },
     size: (state) => {
       const data = useDataStore();
-      return data.sizes.find((i) => i.id === state.sauceId) ?? data.sizes[0];
+      return data.sizes.find((i) => i.id === state.sizeId) ?? data.sizes[0];
     },
     ingredientsExtended: (state) => {
       const data = useDataStore();
@@ -44,5 +44,71 @@ export const usePizzaStore = defineStore("pizza", {
       return ingredientsQuantity(state);
     },
   },
-  actions: {},
+  actions: {
+    setName(name) {
+      this.name = name;
+    },
+    setSauce(sauceId) {
+      this.sauceId = sauceId;
+    },
+    setDough(doughId) {
+      this.doughId = doughId;
+    },
+    setSize(sizeId) {
+      this.sizeId = sizeId;
+    },
+    setIngredients(ingredients) {
+      this.ingredients = ingredients;
+    },
+    addIngredient(ingredientId) {
+      this.ingredients.push({
+        ingredientId,
+        quantity: 1,
+      });
+    },
+    incrementIngredientQuantity(ingredientId) {
+      const ingredientIdx = this.ingredients.findIndex(
+        (item) => item.ingredientId === ingredientId
+      );
+
+      if (ingredientIdx === -1) {
+        this.addIngredient(ingredientId);
+        return;
+      }
+
+      this.ingredients[ingredientIdx].quantity++;
+    },
+    setIngredientQuantity(ingredientId, count) {
+      const ingredientIdx = this.ingredients.findIndex(
+        (item) => item.ingredientId === ingredientId
+      );
+
+      /*
+       * Добавляем ингредиент, если его нет, а количество больше 0
+       * Если ингредиента нет, а количество 0 или меньше, то ничего не делаем
+       */
+      if (ingredientIdx === -1 && count > 0) {
+        this.addIngredient(ingredientId);
+        return;
+      } else if (ingredientIdx === -1) {
+        return;
+      }
+
+      /* Удаляем ингредиент, если количество 0 */
+      if (count === 0) {
+        this.ingredients.splice(ingredientIdx, 1);
+        return;
+      }
+
+      this.ingredients[ingredientIdx].quantity = count;
+    },
+    loadPizza(pizza) {
+      this.index = pizza.index;
+      this.name = pizza.name;
+      this.sauceId = pizza.sauceId;
+      this.doughId = pizza.doughId;
+      this.sizeId = pizza.sizeId;
+      this.ingredients = pizza.ingredients;
+    },
+  },
 });

@@ -10,9 +10,9 @@
       <input
         type="radio"
         name="sauce"
-        :value="sauces.value"
-        :checked="sauce.value === modelValue"
-        @input="emit('update:modelValue', sauce.value)"
+        :value="sauces.id"
+        :checked="sauce.id === modelValue"
+        @input="emit('update:modelValue', sauce.id)"
       />
       <span>{{ sauce.name }}</span>
     </label>

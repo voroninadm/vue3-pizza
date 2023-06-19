@@ -28,8 +28,8 @@ const THREE_INGREDIENTS = 3;
 
 const props = defineProps({
   dough: {
-    type: String,
-    default: "light",
+    type: Number,
+    required: true,
   },
   sauce: {
     type: String,

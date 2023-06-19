@@ -4,9 +4,9 @@
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
 
-        <dough-selector v-model="pizza.dough" :doughs="doughs" />
+        <dough-selector v-model="doughId" :doughs="dataStore.doughs" />
 
-        <size-selector v-model="pizza.size" :sizes="sizes" />
+        <size-selector v-model="sizeId" :sizes="dataStore.sizes" />
 
         <div class="content__ingredients">
           <div class="sheet">
@@ -14,7 +14,7 @@
               Выберите ингредиенты
             </h2>
             <div class="sheet__content ingredients">
-              <sauce-selector v-model="pizza.sauce" :sauces="sauces" />
+              <sauce-selector v-model="sauceId" :sauces="dataStore.sauces" />
 
               <ingredients-selector
                 :ingredients="ingredients"
@@ -37,8 +37,8 @@
           </label>
 
           <pizza-constructor
-            :dough="pizza.dough"
-            :sauce="pizza.sauce"
+            :dough="pizzaStore.dough.value"
+            :sauce="pizzaStore.sauce.value"
             :ingredients="pizza.ingredients"
             @drop="addIngredient"
           />
@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 
 // components
 import DoughSelector from "../modules/constructor/DoughSelector.vue";
@@ -82,9 +82,44 @@ const ingredients = ingredientsJSON.map(normalizeIngredients);
 const sauces = saucesJSON.map(normalizeSauces);
 const sizes = sizesJSON.map(normalizeSize);
 
+import { useDataStore } from "@/stores/data";
+import { usePizzaStore } from "@/stores/pizza";
+import { useCartStore } from "@/stores/cart";
+
+const dataStore = useDataStore();
+const pizzaStore = usePizzaStore();
+const cartStore = useCartStore();
+
+const doughId = computed({
+  get() {
+    return pizzaStore.doughId;
+  },
+  set(value) {
+    pizzaStore.setDough(value);
+  },
+});
+
+const sizeId = computed({
+  get() {
+    return pizzaStore.sizeId;
+  },
+  set(value) {
+    pizzaStore.setSize(value);
+  },
+});
+
+const sauceId = computed({
+  get() {
+    return pizzaStore.sauceId;
+  },
+  set(value) {
+    pizzaStore.setSauce(value);
+  },
+});
+
 const pizza = reactive({
   name: "",
-  dough: doughs[0].value,
+  dough: doughId,
   size: sizes[1].value,
   sauce: sauces[0].value,
   ingredients: ingredients.reduce((prevIngredient, ingredient) => {
