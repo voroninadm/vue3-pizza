@@ -3,15 +3,17 @@ import { ingredientsQuantity } from "@/common/helpers/ingredients-quantity";
 import { pizzaPrice } from "@/common/helpers/pizza-price";
 import { useDataStore } from "@/stores/data";
 
+export const defaultPizzaState = {
+  index: null,
+  name: "",
+  sauceId: 0,
+  doughId: 0,
+  sizeId: 0,
+  ingredients: [],
+};
+
 export const usePizzaStore = defineStore("pizza", {
-  state: () => ({
-    index: null,
-    name: "",
-    sauceId: 1,
-    doughId: 1,
-    sizeId: 2,
-    ingredients: [],
-  }),
+  state: () => defaultPizzaState,
   getters: {
     sauce: (state) => {
       const data = useDataStore();

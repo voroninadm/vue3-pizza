@@ -10,7 +10,7 @@
       >
         <app-drag
           :data-transfer="ingredient"
-          :draggable="getValue(ingredient.value) < MAX_INGREDIENT_COUNT"
+          :draggable="values[ingredient.id] < MAX_INGREDIENT_COUNT"
         >
           <span :class="`filling filling--${ingredient.value}`">{{
             ingredient.name
@@ -19,10 +19,10 @@
 
         <app-counter
           class="ingredients__counter"
-          :value="getValue(ingredient.value)"
+          :value="values[ingredient.id]"
           :min="0"
           :max="MAX_INGREDIENT_COUNT"
-          @input="inputValue(ingredient.value, $event)"
+          @input="inputValue(ingredient.id, $event)"
         />
       </li>
     </ul>
