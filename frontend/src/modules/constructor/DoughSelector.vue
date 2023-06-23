@@ -3,22 +3,24 @@
     <div class="sheet">
       <h2 class="title title--small sheet__title">Выберите тесто</h2>
 
-      <div class="sheet__content dough">
+      <div class="sheet__content">
         <label
-          v-for="dough in doughs"
-          :key="dough.id"
-          :class="`dough__input dough__input--${dough.value}`"
+          v-for="doughType in items"
+          :key="doughType.id"
+          class="dough__input"
         >
           <input
             type="radio"
             name="dough"
-            :value="dough.id"
+            :value="doughType.id"
+            :checked="doughType.id === modelValue"
             class="visually-hidden"
-            :checked="dough.id == modelValue"
-            @input="emit('update:modelValue', dough.id)"
+            @input="emit('update:modelValue', doughType.id)"
           />
-          <b>{{ dough.name }}</b>
-          <span>{{ dough.description }}</span>
+          <img :src="getPublicImage(doughType.image)" :alt="doughType.name" />
+
+          <b>{{ doughType.name }}</b>
+          <span>{{ doughType.description }}</span>
         </label>
       </div>
     </div>
@@ -26,14 +28,16 @@
 </template>
 
 <script setup>
+import { getPublicImage } from "@/common/helpers/public-image";
+
 defineProps({
-  doughs: {
-    type: Array,
-    default: () => [],
-  },
   modelValue: {
     type: Number,
     required: true,
+  },
+  items: {
+    type: Array,
+    default: () => [],
   },
 });
 
@@ -60,23 +64,19 @@ const emit = defineEmits(["update:modelValue"]);
 
   cursor: pointer;
 
+  img {
+    @include p_center-v;
+
+    width: 36px;
+    height: 36px;
+
+    transition: 0.3s;
+
+    border-radius: 50%;
+  }
+
   b {
     @include r-s16-h19;
-
-    &::before {
-      @include p_center-v;
-
-      width: 36px;
-      height: 36px;
-
-      content: "";
-      transition: 0.3s;
-
-      border-radius: 50%;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover;
-    }
   }
 
   span {
@@ -85,30 +85,14 @@ const emit = defineEmits(["update:modelValue"]);
     display: block;
   }
 
-  &--light {
-    b {
-      &::before {
-        background-image: url("@/assets/img/dough-light.svg");
-      }
-    }
-  }
-
-  &--large {
-    b {
-      &::before {
-        background-image: url("@/assets/img/dough-large.svg");
-      }
-    }
-  }
-
   &:hover {
-    b::before {
+    img {
       box-shadow: $shadow-regular;
     }
   }
 
   input {
-    &:checked + b::before {
+    &:checked + img {
       box-shadow: $shadow-large;
     }
   }

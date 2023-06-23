@@ -21,7 +21,7 @@
           >
             <div class="product cart-list__product">
               <img
-                :src="getImage('product.svg')"
+                :src="getPublicImage('/public/img/product.svg')"
                 class="product__img"
                 width="56"
                 height="56"
@@ -72,7 +72,7 @@
             >
               <p class="additional-list__description">
                 <img
-                  :src="getImage(`${misc.image}.svg`)"
+                  :src="getPublicImage(misc.image)"
                   width="39"
                   height="60"
                   alt="Coca-Cola 0,5 литра"
@@ -106,9 +106,14 @@
                 class="select"
                 @input="deliveryOption = $event.target.value"
               >
-                <option value="self">Заберу сам</option>
-                <option value="new">Новый адрес</option>
-                <option value="home">Дом</option>
+                <option :value="-1">Новый адрес</option>
+                <option
+                  v-for="address in profileStore.addresses"
+                  :key="address.id"
+                  :value="address.id"
+                >
+                  {{ address.name }}
+                </option>
               </select>
             </label>
 
@@ -122,7 +127,7 @@
               />
             </label>
 
-            <div v-if="deliveryOption === 'new'" class="cart-form__address">
+            <div v-if="isNewAddress" class="cart-form__address">
               <span class="cart-form__label">Новый адрес:</span>
 
               <div class="cart-form__input">
@@ -183,11 +188,30 @@ import { usePizzaStore } from "@/stores/pizza";
 import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useProfileStore } from "@/stores/profile";
+import { useAuthStore } from "@/stores/auth";
+import { getPublicImage } from "@/common/helpers/public-image";
+
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const pizzaStore = usePizzaStore();
 const profileStore = useProfileStore();
+
 const router = useRouter();
-const deliveryOption = ref("self");
+
+const deliveryOption = ref(-1);
+const isNewAddress = computed(() => deliveryOption.value === -1);
+const deliveryAddress = computed(() => {
+  if (isNewAddress.value) {
+    return null;
+  } else {
+    return (
+      profileStore.addresses.find(
+        (a) => a.id === Number(deliveryOption.value)
+      ) ?? null
+    );
+  }
+});
+
 const phone = computed({
   get() {
     return cartStore.phone;
@@ -196,6 +220,7 @@ const phone = computed({
     cartStore.setPhone(value);
   },
 });
+
 const street = computed({
   get() {
     return cartStore.address.street;
@@ -204,6 +229,7 @@ const street = computed({
     cartStore.setStreet(value);
   },
 });
+
 const building = computed({
   get() {
     return cartStore.address.building;
@@ -212,6 +238,7 @@ const building = computed({
     cartStore.setBuilding(value);
   },
 });
+
 const flat = computed({
   get() {
     return cartStore.address.flat;
@@ -220,6 +247,7 @@ const flat = computed({
     cartStore.setFlat(value);
   },
 });
+
 const editPizza = async (index) => {
   pizzaStore.loadPizza({
     index,
@@ -227,233 +255,311 @@ const editPizza = async (index) => {
   });
   await router.push({ name: "home" });
 };
+
 const submit = async () => {
-  if (deliveryOption.value === "home") {
-    cartStore.setAddress(profileStore.addresses[0]);
+  if (!isNewAddress.value) {
+    cartStore.setAddress(deliveryAddress.value);
   }
-  await router.push({ name: "success" });
-};
-const getImage = (image) => {
-  return new URL(`../assets/img/${image}`, import.meta.url).href;
+
+  const res = await cartStore.publishOrder();
+  if (res.__state === "success") {
+    authStore.isAuthenticated && (await profileStore.loadOrders());
+    await router.push({ name: "success" });
+    cartStore.reset();
+  }
 };
 </script>
+
 <style lang="scss">
 @import "@/assets/scss/ds-system/ds.scss";
 @import "@/assets/scss/mixins/mixins.scss";
+
 .layout-form {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
+
 .cart__title {
   margin-bottom: 15px;
 }
+
 .cart__additional {
   margin-top: 15px;
   margin-bottom: 25px;
 }
+
 .cart__empty {
   padding: 20px 30px;
 }
+
 .cart-form {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 }
+
 .cart-form__select {
   display: flex;
   align-items: center;
+
   margin-right: auto;
+
   span {
     margin-right: 16px;
   }
 }
+
 .cart-form__label {
   @include b-s16-h19;
+
   white-space: nowrap;
 }
+
 .cart-form__address {
   display: flex;
   align-items: center;
+
   width: 100%;
   margin-top: 20px;
 }
+
 .cart-form__input {
   flex-grow: 1;
+
   margin-bottom: 20px;
   margin-left: 16px;
+
   &--small {
     max-width: 120px;
   }
 }
+
 .cart-list {
   @include clear-list;
+
   padding: 15px 0;
 }
+
 .cart-list__item {
   display: flex;
   align-items: flex-start;
+
   margin-bottom: 15px;
   padding-right: 15px;
   padding-bottom: 15px;
   padding-left: 15px;
+
   border-bottom: 1px solid rgba($green-500, 0.1);
+
   &:last-child {
     margin-bottom: 0;
     padding-bottom: 0;
+
     border-bottom: none;
   }
 }
+
 .cart-list__product {
   flex-grow: 1;
+
   margin-right: auto;
 }
+
 .cart-list__counter {
   width: 54px;
   margin-right: auto;
   margin-left: 20px;
 }
+
 .cart-list__price {
   min-width: 100px;
   margin-right: 36px;
   margin-left: 10px;
+
   text-align: right;
+
   b {
     @include b-s16-h19;
   }
 }
+
 .cart-list__edit {
   @include l-s11-h13;
+
   cursor: pointer;
   transition: 0.3s;
+
   border: none;
   outline: none;
   background-color: transparent;
+
   &:hover {
     color: $green-500;
   }
+
   &:active {
     color: $green-600;
   }
+
   &:focus {
     color: $green-400;
   }
 }
+
 .product {
   display: flex;
   align-items: center;
 }
+
 .product__text {
   margin-left: 15px;
+
   h2 {
     @include b-s18-h21;
+
     margin-top: 0;
     margin-bottom: 10px;
   }
+
   ul {
     @include clear-list;
     @include l-s11-h13;
   }
 }
+
 .footer {
   display: flex;
   align-items: center;
+
   margin-top: auto;
   padding: 25px 2.12%;
+
   background-color: rgba($green-500, 0.1);
 }
+
 .footer__more {
   width: 220px;
   margin-right: 16px;
+
   a {
     padding-top: 16px;
     padding-bottom: 16px;
   }
 }
+
 .footer__text {
   @include l-s11-h13;
+
   color: rgba($black, 0.5);
 }
+
 .footer__price {
   @include b-s24-h28;
+
   margin-right: 12px;
   margin-left: auto;
 }
+
 .footer__submit {
   button {
     padding: 16px 14px;
   }
 }
+
 .additional-list {
   @include clear-list;
+
   display: flex;
   flex-wrap: wrap;
 }
+
 .additional-list__description {
   display: flex;
   align-items: flex-start;
+
   margin: 0;
   margin-bottom: 8px;
 }
+
 .additional-list__item {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+
   width: 200px;
   margin-right: 15px;
   margin-bottom: 15px;
   padding-top: 15px;
   padding-bottom: 15px;
+
   img {
     margin-right: 10px;
     margin-left: 15px;
   }
+
   span {
     @include b-s14-h16;
+
     display: inline;
+
     width: 100px;
     margin-right: 15px;
   }
 }
+
 .additional-list__wrapper {
   display: flex;
   align-items: center;
+
   box-sizing: border-box;
   width: 100%;
   margin-top: auto;
   padding-top: 18px;
   padding-right: 15px;
   padding-left: 15px;
+
   border-top: 1px solid rgba($green-500, 0.1);
 }
+
 .additional-list__counter {
   width: 54px;
   margin-right: auto;
 }
+
 .additional-list__price {
   @include b-s16-h19;
 }
+
 .select {
   @include r-s16-h19;
+
   display: block;
+
   margin: 0;
   padding: 8px 16px;
   padding-right: 30px;
+
   cursor: pointer;
   transition: 0.3s;
+
   color: $black;
   border: 1px solid $purple-400;
   border-radius: 8px;
   outline: none;
   background-color: $silver-100;
-  background-image: url("@/assets/img/select.svg");
+  background-image: url("/api/public/img/select.svg");
   background-repeat: no-repeat;
   background-position: right 8px center;
+
   font-family: inherit;
+
   appearance: none;
+
   &:hover {
     border-color: $orange-100;
   }
+
   &:focus {
     border-color: $green-500;
   }

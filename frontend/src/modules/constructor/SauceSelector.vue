@@ -3,31 +3,31 @@
     <p>Основной соус:</p>
 
     <label
-      v-for="sauce in sauces"
-      :key="sauce.id"
+      v-for="sauceType in items"
+      :key="sauceType.id"
       class="radio ingredients__input"
     >
       <input
         type="radio"
         name="sauce"
-        :value="sauces.id"
-        :checked="sauce.id === modelValue"
-        @input="emit('update:modelValue', sauce.id)"
+        :value="sauceType.value"
+        :checked="sauceType.id === modelValue"
+        @input="emit('update:modelValue', sauceType.id)"
       />
-      <span>{{ sauce.name }}</span>
+      <span>{{ sauceType.name }}</span>
     </label>
   </div>
 </template>
 
 <script setup>
 defineProps({
-  sauces: {
+  modelValue: {
+    type: Number,
+    required: true,
+  },
+  items: {
     type: Array,
     default: () => [],
-  },
-  modelValue: {
-    type: String,
-    default: "",
   },
 });
 
@@ -36,7 +36,7 @@ const emit = defineEmits(["update:modelValue"]);
 
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds.scss";
-@import "@/assets/scss/mixins/mixins.scss";
+
 .ingredients__sauce {
   display: flex;
   align-items: center;

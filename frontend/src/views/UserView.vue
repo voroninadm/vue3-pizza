@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import SidebarLayout from "@/layouts/dynamic/SidebarLayout.vue";
+import SidebarLayout from "@/layouts/SidebarLayout.vue";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 

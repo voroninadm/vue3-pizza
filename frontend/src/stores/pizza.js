@@ -3,17 +3,15 @@ import { ingredientsQuantity } from "@/common/helpers/ingredients-quantity";
 import { pizzaPrice } from "@/common/helpers/pizza-price";
 import { useDataStore } from "@/stores/data";
 
-export const defaultPizzaState = {
-  index: null,
-  name: "",
-  sauceId: 0,
-  doughId: 0,
-  sizeId: 0,
-  ingredients: [],
-};
-
 export const usePizzaStore = defineStore("pizza", {
-  state: () => defaultPizzaState,
+  state: () => ({
+    index: null,
+    name: "",
+    sauceId: 0,
+    doughId: 0,
+    sizeId: 0,
+    ingredients: [],
+  }),
   getters: {
     sauce: (state) => {
       const data = useDataStore();
@@ -32,10 +30,12 @@ export const usePizzaStore = defineStore("pizza", {
       const pizzaIngredientsIds = state.ingredients.map((i) => i.ingredientId);
       return data.ingredients
         .filter((i) => pizzaIngredientsIds.includes(i.id))
-        .map((i, idx) => {
+        .map((i) => {
           return {
             ...i,
-            quantity: state.ingredients[idx]?.quantity ?? 0,
+            quantity:
+              state.ingredients.find((item) => item.ingredientId === i.id)
+                ?.quantity ?? 0,
           };
         });
     },

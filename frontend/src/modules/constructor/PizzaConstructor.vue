@@ -1,16 +1,16 @@
 <template>
-  <div class="content__constructor">
+  <div class="pizza-constructor">
     <app-drop @drop="emit('drop', $event.id)">
       <div class="pizza" :class="`pizza--foundation--${dough}-${sauce}`">
         <div class="pizza__wrapper">
           <div
-            v-for="ingredient in ingredients"
-            :key="ingredient.id"
+            v-for="item in ingredients"
+            :key="item.id"
             class="pizza__filling"
             :class="[
-              `pizza__filling--${ingredient.value}`,
-              ingredient.quantity === TWO_INGREDIENTS && 'pizza__filling--second',
-              ingredient.quantity === THREE_INGREDIENTS && 'pizza__filling--third',
+              `pizza__filling--${item.value}`,
+              item.quantity === TWO_INGREDIENTS && 'pizza__filling--second',
+              item.quantity === THREE_INGREDIENTS && 'pizza__filling--third',
             ]"
           />
         </div>
@@ -44,40 +44,11 @@ const emit = defineEmits(["drop"]);
 </script>
 
 <style lang="scss" scoped>
-.content__constructor {
+.pizza-constructor {
   width: 315px;
   margin-top: 25px;
   margin-right: auto;
   margin-left: auto;
-}
-
-.pizza {
-  position: relative;
-
-  display: block;
-
-  box-sizing: border-box;
-  width: 100%;
-
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100%;
-
-  &--foundation--large-creamy {
-    background-image: url("@/assets/img/foundation/big-creamy.svg");
-  }
-
-  &--foundation--large-tomato {
-    background-image: url("@/assets/img/foundation/big-tomato.svg");
-  }
-
-  &--foundation--light-creamy {
-    background-image: url("@/assets/img/foundation/small-creamy.svg");
-  }
-
-  &--foundation--light-tomato {
-    background-image: url("@/assets/img/foundation/small-tomato.svg");
-  }
 }
 
 .pizza__wrapper {
@@ -141,91 +112,120 @@ const emit = defineEmits(["drop"]);
   &--ananas,
   &--ananas.pizza__filling--second::before,
   &--ananas.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/ananas.svg");
+    background-image: url("/api/public/img/filling-big/ananas.svg");
   }
 
   &--bacon,
   &--bacon.pizza__filling--second::before,
   &--bacon.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/bacon.svg");
+    background-image: url("/api/public/img/filling-big/bacon.svg");
   }
 
   &--blue_cheese,
   &--blue.pizza__filling--second::before,
   &--blue.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/blue_cheese.svg");
+    background-image: url("/api/public/img/filling-big/blue_cheese.svg");
   }
 
   &--cheddar,
   &--cheddar.pizza__filling--second::before,
   &--cheddar.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/cheddar.svg");
+    background-image: url("/api/public/img/filling-big/cheddar.svg");
   }
 
   &--chile,
   &--chile.pizza__filling--second::before,
   &--chile.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/chile.svg");
+    background-image: url("/api/public/img/filling-big/chile.svg");
   }
 
   &--ham,
   &--ham.pizza__filling--second::before,
   &--ham.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/ham.svg");
+    background-image: url("/api/public/img/filling-big/ham.svg");
   }
 
   &--jalapeno,
   &--jalapeno.pizza__filling--second::before,
   &--jalapeno.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/jalapeno.svg");
+    background-image: url("/api/public/img/filling-big/jalapeno.svg");
   }
 
   &--mozzarella,
   &--mozzarella.pizza__filling--second::before,
   &--mozzarella.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/mozzarella.svg");
+    background-image: url("/api/public/img/filling-big/mozzarella.svg");
   }
 
   &--mushrooms,
   &--mushrooms.pizza__filling--second::before,
   &--mushrooms.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/mushrooms.svg");
+    background-image: url("/api/public/img/filling-big/mushrooms.svg");
   }
 
   &--olives,
   &--olives.pizza__filling--second::before,
   &--olives.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/olives.svg");
+    background-image: url("/api/public/img/filling-big/olives.svg");
   }
 
   &--onion,
   &--onion.pizza__filling--second::before,
   &--onion.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/onion.svg");
+    background-image: url("/api/public/img/filling-big/onion.svg");
   }
 
   &--parmesan,
   &--parmesan.pizza__filling--second::before,
   &--parmesan.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/parmesan.svg");
+    background-image: url("/api/public/img/filling-big/parmesan.svg");
   }
 
   &--salami,
   &---salami.pizza__filling--second::before,
   &---salami.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/salami.svg");
+    background-image: url("/api/public/img/filling-big/salami.svg");
   }
 
   &--salmon,
   &--salmon.pizza__filling--second::before,
   &--salmon.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/salmon.svg");
+    background-image: url("/api/public/img/filling-big/salmon.svg");
   }
 
   &--tomatoes,
   &--tomatoes.pizza__filling--second::before,
   &--tomatoes.pizza__filling--third::after {
-    background-image: url("@/assets/img/filling-big/tomatoes.svg");
+    background-image: url("/api/public/img/filling-big/tomatoes.svg");
+  }
+}
+
+.pizza {
+  position: relative;
+
+  display: block;
+
+  box-sizing: border-box;
+  width: 100%;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+
+  &--foundation--large-creamy {
+    background-image: url("/api/public/img/foundation/big-creamy.svg");
+  }
+
+  &--foundation--large-tomato {
+    background-image: url("/api/public/img/foundation/big-tomato.svg");
+  }
+
+  &--foundation--light-creamy {
+    background-image: url("/api/public/img/foundation/small-creamy.svg");
+  }
+
+  &--foundation--light-tomato {
+    background-image: url("/api/public/img/foundation/small-tomato.svg");
   }
 }
 </style>

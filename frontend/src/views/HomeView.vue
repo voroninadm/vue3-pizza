@@ -1,12 +1,12 @@
 <template>
-  <main class="content">
+  <main v-if="dataStore.isDataLoaded" class="content">
     <form action="#" method="post">
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
 
-        <dough-selector v-model="doughId" :doughs="dataStore.doughs" />
+        <dough-selector v-model="doughId" :items="dataStore.doughs" />
 
-        <size-selector v-model="sizeId" :sizes="dataStore.sizes" />
+        <diameter-selector v-model="sizeId" :items="dataStore.sizes" />
 
         <div class="content__ingredients">
           <div class="sheet">
@@ -15,11 +15,11 @@
             </h2>
 
             <div class="sheet__content ingredients">
-              <sauce-selector v-model="sauceId" :sauces="dataStore.sauces" />
+              <sauce-selector v-model="sauceId" :items="dataStore.sauces" />
 
               <ingredients-selector
                 :values="pizzaStore.ingredientQuantities"
-                :ingredients="dataStore.ingredients"
+                :items="dataStore.ingredients"
                 @update="pizzaStore.setIngredientQuantity"
               />
             </div>
@@ -64,11 +64,10 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import DoughSelector from "@/modules/constructor/DoughSelector.vue";
-import SizeSelector from "@/modules/constructor/SizeSelector.vue";
+import DiameterSelector from "@/modules/constructor/DiameterSelector.vue";
 import SauceSelector from "@/modules/constructor/SauceSelector.vue";
 import IngredientsSelector from "@/modules/constructor/IngredientsSelector.vue";
 import PizzaConstructor from "@/modules/constructor/PizzaConstructor.vue";
-
 import { usePizzaStore } from "@/stores/pizza";
 import { useDataStore } from "@/stores/data";
 import { useCartStore } from "@/stores/cart";
@@ -77,6 +76,7 @@ import { useRouter } from "vue-router";
 const dataStore = useDataStore();
 const pizzaStore = usePizzaStore();
 const cartStore = useCartStore();
+
 const router = useRouter();
 
 const name = computed({
@@ -87,6 +87,7 @@ const name = computed({
     pizzaStore.setName(value);
   },
 });
+
 const doughId = computed({
   get() {
     return pizzaStore.doughId;
@@ -113,16 +114,27 @@ const sauceId = computed({
     pizzaStore.setSauce(value);
   },
 });
+
 const disableSubmit = computed(() => {
   return name.value.length === 0 || pizzaStore.price === 0;
 });
+
 const addToCart = async () => {
   cartStore.savePizza(pizzaStore.$state);
   await router.push({ name: "cart" });
   resetPizza();
 };
+
 const resetPizza = () => {
-  pizzaStore.defaultPizzaState;
+  pizzaStore.setName("");
+
+  if (dataStore.isDataLoaded) {
+    pizzaStore.setDough(dataStore.doughs[0].id);
+    pizzaStore.setSize(dataStore.sizes[0].id);
+    pizzaStore.setSauce(dataStore.sauces[0].id);
+  }
+
+  pizzaStore.setIngredients([]);
 };
 
 onMounted(() => {
@@ -135,26 +147,33 @@ onMounted(() => {
 <style lang="scss">
 @import "@/assets/scss/ds-system/ds.scss";
 @import "@/assets/scss/mixins/mixins.scss";
+
 .content__ingredients {
   width: 527px;
   margin-top: 15px;
   margin-right: auto;
   margin-bottom: 15px;
 }
+
 .content__pizza {
   width: 373px;
   margin-top: 15px;
   margin-bottom: 15px;
 }
+
 .content__result {
   display: flex;
   align-items: center;
   justify-content: center;
+
   margin-top: 25px;
+
   p {
     @include b-s24-h28;
+
     margin: 0;
   }
+
   button {
     margin-left: 12px;
     padding: 16px 45px;

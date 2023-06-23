@@ -4,7 +4,7 @@
 
     <ul class="ingredients__list">
       <li
-        v-for="ingredient in ingredients"
+        v-for="ingredient in items"
         :key="ingredient.id"
         class="ingredients__item"
       >
@@ -12,9 +12,13 @@
           :data-transfer="ingredient"
           :draggable="values[ingredient.id] < MAX_INGREDIENT_COUNT"
         >
-          <span :class="`filling filling--${ingredient.value}`">{{
-            ingredient.name
-          }}</span>
+          <div class="filling">
+            <img
+              :src="getPublicImage(ingredient.image)"
+              :alt="ingredient.name"
+            />
+            {{ ingredient.name }}
+          </div>
         </app-drag>
 
         <app-counter
@@ -30,50 +34,37 @@
 </template>
 
 <script setup>
-import { toRef } from "vue";
 import AppDrag from "@/common/components/AppDrag.vue";
 import { MAX_INGREDIENT_COUNT } from "@/common/constants";
 import AppCounter from "@/common/components/AppCounter.vue";
+import { getPublicImage } from "@/common/helpers/public-image";
 
-const props = defineProps({
-  ingredients: {
-    type: Array,
-    default: () => [],
-  },
+defineProps({
   values: {
     type: Object,
     default: () => ({}),
+  },
+  items: {
+    type: Array,
+    default: () => [],
   },
 });
 
 const emit = defineEmits(["update"]);
 
-const values = toRef(props, "values");
-
-const getValue = (ingredient) => {
-  return values.value[ingredient] ?? 0;
-};
-
 const setValue = (ingredient, count) => {
   emit("update", ingredient, Number(count));
 };
 
-// const decrementValue = (ingredient) => {
-//   setValue(ingredient, getValue(ingredient) - 1);
-// };
-
-// const incrementValue = (ingredient) => {
-//   setValue(ingredient, getValue(ingredient) + 1);
-// };
-
 const inputValue = (ingredient, count) => {
-  return setValue(ingredient, Math.min(MAX_INGREDIENT_COUNT, Number(count)));
+  setValue(ingredient, Math.min(MAX_INGREDIENT_COUNT, Number(count)));
 };
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds.scss";
 @import "@/assets/scss/mixins/mixins.scss";
+
 .ingredients__filling {
   width: 100%;
 
@@ -106,150 +97,6 @@ const inputValue = (ingredient, count) => {
   margin-left: 36px;
 }
 
-.counter {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-}
-
-.counter__button {
-  $el: &;
-  $size_icon: 50%;
-
-  position: relative;
-
-  display: block;
-
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  padding: 0;
-
-  cursor: pointer;
-  transition: 0.3s;
-
-  border: none;
-  border-radius: 50%;
-  outline: none;
-
-  &--minus {
-    background-color: $purple-100;
-
-    &::before {
-      @include p_center-all;
-
-      width: $size_icon;
-      height: 2px;
-
-      content: "";
-
-      border-radius: 2px;
-      background-color: $black;
-    }
-
-    &:hover:not(:active):not(:disabled) {
-      background-color: $purple-200;
-    }
-
-    &:active:not(:disabled) {
-      background-color: $purple-300;
-    }
-
-    &:focus:not(:disabled) {
-      box-shadow: $shadow-regular;
-    }
-
-    &:disabled {
-      cursor: default;
-
-      &::before {
-        opacity: 0.1;
-      }
-    }
-  }
-
-  &--plus {
-    background-color: $green-500;
-
-    &::before {
-      @include p_center-all;
-
-      width: $size_icon;
-      height: 2px;
-
-      content: "";
-
-      border-radius: 2px;
-      background-color: $white;
-    }
-
-    &::after {
-      @include p_center-all;
-
-      width: $size_icon;
-      height: 2px;
-
-      content: "";
-      transform: translate(-50%, -50%) rotate(90deg);
-
-      border-radius: 2px;
-      background-color: $white;
-    }
-
-    &:hover:not(:active):not(:disabled) {
-      background-color: $green-400;
-    }
-
-    &:active:not(:disabled) {
-      background-color: $green-600;
-    }
-
-    &:focus:not(:disabled) {
-      box-shadow: $shadow-regular;
-    }
-
-    &:disabled {
-      cursor: default;
-
-      opacity: 0.3;
-    }
-  }
-
-  &--orange {
-    background-color: $orange-200;
-
-    &:hover:not(:active):not(:disabled) {
-      background-color: $orange-100;
-    }
-
-    &:active:not(:disabled) {
-      background-color: $orange-300;
-    }
-  }
-}
-
-.counter__input {
-  @include r-s14-h16;
-
-  box-sizing: border-box;
-  width: 22px;
-  margin: 0;
-  padding: 0 3px;
-
-  text-align: center;
-
-  color: $black;
-  border: none;
-  border-radius: 10px;
-  outline: none;
-  background-color: transparent;
-
-  &:focus {
-    box-shadow: inset $shadow-regular;
-  }
-}
-
 .filling {
   @include r-s14-h16;
 
@@ -259,7 +106,7 @@ const inputValue = (ingredient, count) => {
 
   padding-left: 36px;
 
-  &::before {
+  img {
     @include p_center-v;
 
     display: block;
@@ -267,179 +114,10 @@ const inputValue = (ingredient, count) => {
     width: 32px;
     height: 32px;
 
-    content: "";
+    box-sizing: border-box;
+    padding: 4px;
 
     border-radius: 50%;
-    background-color: $white;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 80% 80%;
-  }
-
-  &--tomatoes::before {
-    background-image: url("@/assets/img/filling/tomatoes.svg");
-  }
-
-  &--ananas::before {
-    background-image: url("@/assets/img/filling/ananas.svg");
-  }
-
-  &--bacon::before {
-    background-image: url("@/assets/img/filling/bacon.svg");
-  }
-
-  &--blue_cheese::before {
-    background-image: url("@/assets/img/filling/blue_cheese.svg");
-  }
-
-  &--cheddar::before {
-    background-image: url("@/assets/img/filling/cheddar.svg");
-  }
-
-  &--chile::before {
-    background-image: url("@/assets/img/filling/chile.svg");
-  }
-
-  &--ham::before {
-    background-image: url("@/assets/img/filling/ham.svg");
-  }
-
-  &--jalapeno::before {
-    background-image: url("@/assets/img/filling/jalapeno.svg");
-  }
-
-  &--mozzarella::before {
-    background-image: url("@/assets/img/filling/mozzarella.svg");
-  }
-
-  &--mushrooms::before {
-    background-image: url("@/assets/img/filling/mushrooms.svg");
-  }
-
-  &--olives::before {
-    background-image: url("@/assets/img/filling/olives.svg");
-  }
-
-  &--onion::before {
-    background-image: url("@/assets/img/filling/onion.svg");
-  }
-
-  &--parmesan::before {
-    background-image: url("@/assets/img/filling/parmesan.svg");
-  }
-
-  &--salami::before {
-    background-image: url("@/assets/img/filling/salami.svg");
-  }
-
-  &--salmon::before {
-    background-image: url("@/assets/img/filling/salmon.svg");
-  }
-}
-
-.button {
-  $bl: &;
-
-  @include b-s18-h21;
-  font-family: inherit;
-  display: block;
-
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-
-  cursor: pointer;
-  transition: 0.3s;
-  text-align: center;
-
-  color: $white;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-  box-shadow: $shadow-medium;
-
-  background-color: $green-500;
-
-  &:hover:not(:active):not(:disabled) {
-    background-color: $green-400;
-  }
-
-  &:active:not(:disabled) {
-    background-color: $green-600;
-  }
-
-  &:focus:not(:disabled) {
-    opacity: 0.5;
-  }
-
-  &:disabled {
-    background-color: $green-300;
-    color: rgba($white, 0.2);
-    cursor: default;
-  }
-
-  &--border {
-    background-color: transparent;
-    border: 1px solid $green-500;
-    color: $black;
-    box-shadow: none;
-
-    &:hover:not(:active):not(:disabled) {
-      color: $green-500;
-      border-color: $green-500;
-      background-color: transparent;
-    }
-
-    &:active:not(:disabled) {
-      color: $green-600;
-      border-color: $green-600;
-      background-color: transparent;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-    }
-  }
-
-  &--transparent {
-    @include b-s14-h16;
-    background-color: transparent;
-    box-shadow: none;
-    color: $black;
-
-    &:hover:not(:active):not(:disabled) {
-      color: $red-800;
-      background-color: transparent;
-    }
-
-    &:active:not(:disabled) {
-      color: $red-900;
-      background-color: transparent;
-    }
-
-    &:disabled {
-      opacity: 0.25;
-    }
-  }
-
-  &--arrow {
-    &::before {
-      content: "";
-      background-image: url("@/assets/img/button-arrow.svg");
-      background-position: center;
-      background-repeat: no-repeat;
-      margin-right: 16px;
-      width: 18px;
-      height: 18px;
-      display: inline-block;
-      vertical-align: middle;
-      transform: translateY(-1px);
-    }
-  }
-
-  &--white {
-    background-color: $white;
-    color: $green-500;
   }
 }
 </style>

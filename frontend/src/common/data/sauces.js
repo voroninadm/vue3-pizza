@@ -1,4 +1,4 @@
 export default {
-  1: "tomato",
-  2: "creamy",
+  1: "creamy",
+  2: "tomato",
 };
