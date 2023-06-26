@@ -3,20 +3,23 @@
     <app-drop @drop="emit('drop', $event.id)">
       <div class="pizza" :class="`pizza--foundation--${dough}-${sauce}`">
         <div class="pizza__wrapper">
-          <div
-            v-for="item in ingredients"
-            :key="item.id"
-            class="pizza__filling"
-            :class="[
-              `pizza__filling--${item.value}`,
-              item.quantity === TWO_INGREDIENTS && 'pizza__filling--second',
-              item.quantity === THREE_INGREDIENTS && 'pizza__filling--third',
-            ]"
-          />
+          <transition-group name="scale">
+            <div
+              v-for="item in ingredients"
+              :key="item.id"
+              class="pizza__filling"
+              :class="[
+                `pizza__filling--${item.value}`,
+                item.quantity === TWO_INGREDIENTS && 'pizza__filling--second',
+                item.quantity === THREE_INGREDIENTS && 'pizza__filling--third',
+              ]"
+            />
+          </transition-group>
         </div>
       </div>
     </app-drop>
   </div>
+  <!--  -->
 </template>
 
 <script setup>
@@ -227,5 +230,16 @@ const emit = defineEmits(["drop"]);
   &--foundation--light-tomato {
     background-image: url("/api/public/img/foundation/small-tomato.svg");
   }
+}
+
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.5s ease;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(0);
 }
 </style>

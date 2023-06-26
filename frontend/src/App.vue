@@ -1,6 +1,10 @@
 <template>
   <app-layout>
-    <router-view v-if="isLoaded" />
+    <router-view v-slot="{ Component }">
+      <transition name="slide" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
   </app-layout>
 </template>
 
@@ -12,11 +16,9 @@ import { useAuthStore } from "@/stores/auth";
 import JwtService from "@/services/jwt/jwt.service";
 import { router } from "@/router";
 import { useRoute } from "vue-router";
-
 const dataStore = useDataStore();
 const route = useRoute();
 const isLoaded = ref(false);
-
 const checkLoggedIn = async () => {
   const authStore = useAuthStore();
   const token = JwtService.getToken();
@@ -24,7 +26,6 @@ const checkLoggedIn = async () => {
     isLoaded.value = true;
     return;
   }
-
   try {
     await authStore.whoami();
     const { redirect } = route.query;
@@ -36,7 +37,6 @@ const checkLoggedIn = async () => {
     isLoaded.value = true;
   }
 };
-
 onMounted(() => {
   checkLoggedIn();
   dataStore.loadData();
